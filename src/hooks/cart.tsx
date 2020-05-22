@@ -34,6 +34,8 @@ const CartProvider: React.FC = ({ children }) => {
         '@GoMarketplace:products',
       );
 
+      console.log(storageProducts);
+
       if (storageProducts) {
         setProducts([...JSON.parse(storageProducts)]);
       }
@@ -66,7 +68,7 @@ const CartProvider: React.FC = ({ children }) => {
     async id => {
       const productsWithQuantityDecremented = products.map(product => {
         if (product.id === id) {
-          product.quantity > 0
+          product.quantity >= 1
             ? (product.quantity -= 1)
             : (product.quantity = 0);
         }
@@ -75,6 +77,8 @@ const CartProvider: React.FC = ({ children }) => {
       });
 
       setProducts([...productsWithQuantityDecremented]);
+
+      // await AsyncStorage.removeItem('@GoMarketplace:products');
 
       await AsyncStorage.setItem(
         '@GoMarketplace:products',
@@ -93,6 +97,7 @@ const CartProvider: React.FC = ({ children }) => {
       if (productIsInCart) {
         increment(product.id);
       } else {
+        product.quantity = 1;
         setProducts([...products, product]);
 
         await AsyncStorage.setItem(
